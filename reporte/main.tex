@@ -1,0 +1,38 @@
+% arara: clean: {
+% arara: --> extensions:
+% arara: --> ['aux', 'bbl', 'bcf', 'blg', 'log', 'pdf',
+% arara: --> 'run.xml', 'out', 'toc']
+% arara: --> }
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: yes,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: biber
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: no,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: no,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: clean: {
+% arara: --> extensions:
+% arara: --> ['aux', 'bbl', 'bcf', 'blg', 'log',
+% arara: --> 'run.xml', 'out', 'toc']
+% arara: --> }
+\input{preamble}
+\begin{document}
+\maketitle
+\tableofcontents
+\input{abstract}
+\include{problemstatement}
+\include{mathematicaldevelopment}
+\include{exercises}
+\include{conclusions}
+\printbibliography[title={Referencias},heading=bibintoc]
+\include{appendix}
+\end{document}
