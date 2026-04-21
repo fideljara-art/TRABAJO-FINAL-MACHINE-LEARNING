@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 n, d, epsilon = 150, 100000, 0.1
-X = np.random.uniform(0, 1, (n, d))
-k = np.ceil(4 * np.log(n) / ((epsilon**2) / 2 - (epsilon**3) / 3))
+X = np.random.uniform(low=0, high=1, size=(n, d))
+k = int(np.ceil(4 * np.log(n) / ((epsilon**2) / 2 - (epsilon**3) / 3)))
 phi = np.random.normal(0, 1 / np.sqrt(k), (k, d))
 Z = X @ phi.T
 del phi

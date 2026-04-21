@@ -1,0 +1,227 @@
+% arara: clean: {
+% arara: --> extensions:
+% arara: --> ['aux', 'log', 'nav', 'out',
+% arara: --> 'pdf', 'snm', 'toc']
+% arara: --> }
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: yes,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: biber
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: no,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: lualatex: {
+% arara: --> shell: yes,
+% arara: --> draft: no,
+% arara: --> interaction: batchmode
+% arara: --> }
+% arara: clean: {
+% arara: --> extensions:
+% arara: --> ['aux', 'log', 'nav', 'out',
+% arara: --> 'snm', 'toc']
+% arara: --> }
+\documentclass[
+    12pt,
+    aspectratio=1610,
+    c,
+    spanish,
+    intlimits,
+    handout,
+    leqno,
+    % noamsthm,
+    professionalfonts,
+]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{unicode-math}
+\usepackage[
+	citestyle=numeric,
+	style=numeric,
+	backend=biber,
+]{biblatex}
+\addbibresource{references.bib}
+
+% \usetheme[style=academic,palette=oxford,titlealign=center,mathface=pagella,allserif]{Celestia}
+\usetheme{Singapore}
+\useinnertheme{rounded}
+\usecolortheme{rose}
+\setbeamertemplate{footline}[frame number]{}
+\setbeamertemplate{caption}[numbered]
+\usefonttheme[onlymath]{serif}
+
+\setbeamertemplate{bibliography item}{%
+	\ifboolexpr{ test {\ifentrytype{book}} or test {\ifentrytype{mvbook}}
+		or test {\ifentrytype{collection}} or test {\ifentrytype{mvcollection}}
+		or test {\ifentrytype{reference}} or test {\ifentrytype{mvreference}} }
+	{\setbeamertemplate{bibliography item}[book]}
+	{\ifentrytype{online}
+		{\setbeamertemplate{bibliography item}[online]}
+		{\setbeamertemplate{bibliography item}[article]}}%
+	\usebeamertemplate{bibliography item}}
+
+\defbibenvironment{bibliography}
+{\list{}
+	{\settowidth{\labelwidth}{\usebeamertemplate{bibliography item}}%
+		\setlength{\leftmargin}{\labelwidth}%
+		\setlength{\labelsep}{\biblabelsep}%
+		\addtolength{\leftmargin}{\labelsep}%
+		\setlength{\itemsep}{\bibitemsep}%
+		\setlength{\parsep}{\bibparsep}}}
+{\endlist}
+{\item}
+
+\title{Disminución de la dimensionalidad a través de proyecciones aleatorias}
+\subtitle{Machine Learning para Matemáticos}
+\author{Fidel Jara Huanca}
+\institute{Instituto de Matemática y Ciencias Afines}
+\date{23 de abril de 2026}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}[label=toc]\transblindsvertical
+	\frametitle{\contentsname}
+	\tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Motivación y Problema}
+
+\begin{frame}{La Maldición de la Dimensionalidad}
+	\begin{itemize}
+		\item \textbf{Origen:} Richard Bellman (1958).
+		\item \textbf{Fenómeno del espacio vacío:} El volumen crece exponencialmente con $d$, diluyendo la noción de cercanía.
+		\item \textbf{Impacto en ML:}
+		      \begin{itemize}
+			      \item Inoperatividad de métricas euclídeas tradicionales.
+			      \item Elevado número de parámetros en matrices de covarianza (LDA).
+			      \item Alto coste computacional en algoritmos basados en distancias ($k$-NN).
+		      \end{itemize}
+	\end{itemize}
+
+	Usando el texto de curso~\cite{Wegner2024}.
+	\begin{refsection}
+		\nocite{Wegner2024}
+		\nocite{Johnson1984}
+		\nocite{Dasgupta2003}
+		\printbibliography[heading=none]
+	\end{refsection}
+\end{frame}
+
+\section{Desarrollo Matemático}
+
+\begin{frame}{Concentración de la Medida}
+	En alta dimensión ($d \gg 1$), las distribuciones clásicas exhiben comportamientos anti-intuitivos:
+	\vfill
+	\begin{block}{Ortogonalidad Gaussiana}
+		Vectores aleatorios independientes $\mathcal{N}(\symbf{0}, I_d)$ tienden a ser casi ortogonales.
+	\end{block}
+	\begin{block}{Anillo Gaussiano}
+		La norma de un vector $\symbf{x} \sim \mathcal{N}(\symbf{0}, I_d)$ se concentra fuertemente alrededor de $\sqrt{d}$.
+	\end{block}
+\end{frame}
+
+\begin{frame}{Teorema de Johnson-Lindenstrauss (J-L)}
+	\begin{theorem}
+		Sea $0 < \varepsilon < 1$ y $n$ el número de puntos. Para $k \geq \frac{48}{\varepsilon^2} \log n$, existe una proyección $T: \mathbb{R}^d \to \mathbb{R}^k$ tal que para todo par $\symbf{x}_i, \symbf{x}_j$:
+		\[ (1-\varepsilon) \|\symbf{x}_i - \symbf{x}_j\| \leq \|T(\symbf{x}_i) - T(\symbf{x}_j)\| \leq (1+\varepsilon) \|\symbf{x}_i - \symbf{x}_j\| \]
+	\end{theorem}
+	\vfill
+	\textbf{Propiedad Crítica:} La dimensión proyectada $k$ es independiente de la dimensión original $d$.
+\end{frame}
+
+\begin{frame}{La Proyección de Johnson-Lindenstrauss}
+	Definimos la transformación lineal $T_{U}(\symbf{x}) = \frac{1}{\sqrt{k}} U \symbf{x}$, donde:
+	\vfill
+	\begin{itemize}
+		\item $U \in \mathbb{R}^{k \times d}$ es una matriz aleatoria.
+		\item Cada entrada $u_{ij} \sim \mathcal{N}(0, 1)$ independiente.
+		\item El factor $1/\sqrt{k}$ normaliza la esperanza de la norma proyectada.
+	\end{itemize}
+	\vfill
+	\begin{note}
+		Aunque no es una proyección ortogonal clásica ($P^2=P$), preserva la estructura métrica de forma casi isométrica con alta probabilidad.
+	\end{note}
+\end{frame}
+
+\begin{frame}{Esquema de la Demostración}
+	\begin{enumerate}
+		\item \textbf{Lema de Proyección:} Para un vector fijo $\symbf{v}$, la variable $\|U\symbf{v}\|^2$ sigue una distribución $\chi^2_k$.
+		\item \textbf{Concentración:} Usando cotas de Chernoff/Markov para la cola de la $\chi^2_k$:
+		      \[ P[ |\|T\symbf{v}\| - \|\symbf{v}\|| > \varepsilon \|\symbf{v}\| ] \leq 2 e^{-k \varepsilon^2 / 16} \]
+		\item \textbf{Cota de la Unión:} Aplicada a los $\binom{n}{2}$ pares de puntos:
+		      \[ P[\text{fallo}] \leq n^2 e^{-k \varepsilon^2 / 16} \leq \frac{1}{n} \implies P[\text{éxito}] \geq 1 - \frac{1}{n} \]
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Refinamiento: Cota de Dasgupta-Gupta}
+	\begin{block}{Mejora en la dimensión $k$}
+		En la práctica, la cota teórica de $k$ puede ser conservadora. Dasgupta y Gupta (2003) demostraron que basta con:
+		\[ k \geq 4 \left( \frac{\varepsilon^2}{2} - \frac{\varepsilon^3}{3} \right)^{-1} \log n \]
+	\end{block}
+	\vfill
+	\textbf{Ejemplo:} Para $n=10$ y $\varepsilon=0.15$, pasamos de $k \approx 4913$ a $k \approx 910$, una reducción de dimensionalidad mucho más agresiva.
+\end{frame}
+
+\section{Experimentos Numéricos}
+
+\begin{frame}{Validación Numérica: Configuración}
+	Simulación en Python para verificar el teorema:
+	\begin{itemize}
+		\item \textbf{Datos:} $n=150$ puntos en $\mathbb{R}^{100,000}$.
+		\item \textbf{Distribución:} Uniforme en el hipercubo $[0, 1]^d$.
+		\item \textbf{Parámetros:} $\varepsilon=0.10 \implies k=4295$ (usando cota refinada).
+		\item \textbf{Objetivo:} Evaluar el ratio de distorsión $R = \frac{\|T\symbf{x}_i - T\symbf{x}_j\|}{\|\symbf{x}_i - \symbf{x}_j\|}$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Resultados: Figura 21}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{figura21_python}
+		\caption{Distorsión de 500 pares aleatorios. Todos se mantienen dentro de $1 \pm 0.1$.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Análisis de Sensibilidad}
+	\begin{table}
+		\centering
+		\begin{tabular}{lcccc}
+			\hline
+			$\varepsilon$ & $k$ (Teórico) & \% Éxito & $k$ (Dasgupta) & \% Éxito \\
+			\hline
+			$0.20$        & $6013$        & $100\%$  & $1157$         & $100\%$  \\
+			$0.17$        & $8323$        & $100\%$  & $1565$         & $100\%$  \\
+			$0.15$        & $10690$       & $100\%$  & $1980$         & $100\%$  \\
+			\hline
+		\end{tabular}
+		\caption{Porcentaje de pares que cumplen la cota de distorsión.}
+	\end{table}
+\end{frame}
+
+\section{Aplicaciones y Conclusiones}
+
+\begin{frame}{Aplicaciones en Machine Learning}
+	\begin{itemize}
+		\item \textbf{$k$-NN Acelerado:} La búsqueda de vecinos más cercanos se realiza en $\mathbb{R}^k$, reduciendo el coste de $\mathcal{O}(d)$ a $\mathcal{O}(k)$ por distancia.
+		\item \textbf{$k$-Means:} Preservar distancias asegura que la asignación de clusters sea casi idéntica a la del espacio original.
+		\item \textbf{LDA:} Mitiga el problema de la singularidad de la matriz de covarianza al trabajar en un espacio de menor dimensión sin perder separabilidad.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusiones}
+	\begin{itemize}
+		\item \textbf{Blessing of Dimensionality:} La alta dimensión permite proyecciones aleatorias eficientes gracias a la concentración de la medida.
+		\item \textbf{Versatilidad:} J-L no asume ninguna estructura sobre los datos (a diferencia de PCA).
+		\item \textbf{Eficiencia:} Herramienta fundamental para manejar \textit{Big Data} donde $d$ es del orden de millones.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Referencias}
+	\printbibliography[heading=none]
+\end{frame}
+
+\end{document}
