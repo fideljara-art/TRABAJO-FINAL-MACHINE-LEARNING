@@ -1,6 +1,6 @@
 # Reducción de Dimensionalidad: Teorema de Johnson-Lindenstrauss
 
-Enlace a Google Collab: https://colab.research.google.com/drive/1LKBI2k5FN10nUVoR1dA3iUOXFd29cf-S?usp=sharing
+> Enlace a Google Collab: https://colab.research.google.com/drive/1LKBI2k5FN10nUVoR1dA3iUOXFd29cf-S?usp=sharing
 
 Este proyecto explora el *Teorema de Johnson-Lindenstrauss*, un resultado fundamental en el análisis de datos de alta dimensión que justifica la proyección de puntos a espacios de menor dimensión preservando casi por completo las distancias euclídeas.
 
