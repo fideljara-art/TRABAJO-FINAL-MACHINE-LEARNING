@@ -8,9 +8,9 @@ El objetivo principal es validar empíricamente el Teorema de Johnson-Lindenstra
 
 ## Descripción del Método
 
-El Teorema de Johnson-Lindenstrauss establece que para cualquier $0<\varepsilon<1$, $n\geq 1$ y $k\geq \frac{48}{\varepsilon^2}\log n$, $U\sim\mathcal{N}(0_{k\times d},1)$ y un conjunto de $n$ puntos en $\mathbb{R}^d$ puede ser mapeado a un espacio $\mathbb{R}^k$ (con $k \ll d$) mediante una proyección $T_{U(\omega)}$ tal que para todo par de puntos $\mathbf{x}_{i},\mathbf{x}_{j}$:
+El Teorema de Johnson-Lindenstrauss establece que para cualquier $0<\varepsilon<1$, $n\geq 1$ y $k\geq \frac{48}{\varepsilon^2}\log n$, $U\sim\mathcal{N}(0_{k\times d},1)$ y un conjunto de $n$ puntos en $\mathbb{R}^d$ puede ser mapeado a un espacio $\mathbb{R}^k$ (con $k \ll d$) mediante una proyección $T_{U(\omega)}$ tal que para todo par de puntos $x_{i},x_{j}$:
 
-$$\mathbb{P}[\forall i,j:(1-\varepsilon)\|\mathbf{x}_{i}-\mathbf{x}_{j}\|\leq\|T_{U(\omega)}(\mathbf{x}_{i})-T_{U(\omega)}(\mathbf{x}_{j})\|\leq(1+\varepsilon)\|\mathbf{x}_{i}-\mathbf{x}_{j}\|]\geq 1-\frac{1}{n}.$$
+$$\mathbb{P}[\forall i,j:(1-\varepsilon)\|x_{i}-x_{j}\|\leq\|T_{U(\omega)}(x_{i})-T_{U(\omega)}(x_{j})\|\leq(1+\varepsilon)\|x_{i}-x_{j}\|]\geq 1-\frac{1}{n}.$$
 
 La implementación sigue estos pasos:
 1. **Generación de Datos:** Se crean matrices de datos sintéticos $X$ (ej. $150 \times 20,000$) usando una distribución uniforme $U(0, 1)$.
